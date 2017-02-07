@@ -1,5 +1,12 @@
 var express = require('express');
+var bodyParser = require('body-parser');
+
 var app = express();
+
+// Parse Incoming Requests
+app.use(bodyParser.urlencoded({ extended : false }));
+app.use(bodyParser.json());
+
 
 app.use('/', function(req, res) {
 	res.send('Hello World');
