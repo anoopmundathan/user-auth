@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  .main.container
+    .row
+      .col-md-8.col-md-offset-2
+        form(method="post", action="/login")
+          .user
+            input(type="text" name="username")
+          .user
+            input(type="text" name="password")
+          input(type="submit" value="Login")

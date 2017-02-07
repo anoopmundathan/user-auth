@@ -15,7 +15,12 @@ router.get('/contact', function(req, res, next) {
 
 router.get('/login', function(req, res, next) {
 	// res.render('login');
-	res.send('login');
+	// res.send('login');
+	res.render('login');
+});
+
+router.post('/login', function(req, res, next) {
+	res.send('Logged');
 });
 
 router.get('/profile', function(req, res, next) {

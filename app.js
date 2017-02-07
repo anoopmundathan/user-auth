@@ -1,5 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+var routes = require('./routes/index');
 
 var app = express();
 
@@ -14,7 +16,19 @@ app.use(express.static(__dirname + '/public'));
 app.set('view engine', 'pug');
 app.set('views', __dirname + '/views');
 
-var routes = require('./routes/index');
+// Database setup
+mongoose.connect('mongodb://localhost/bookworm');
+var db = mongoose.connection;
+
+db.on('error', function(err) {
+	console.log('Mongoose connection error' , err);
+});
+
+db.once('open', function() {
+	console.log('Mongoose connection opened');
+});
+
+
 app.use('/', routes);
 
 // Error Handling
