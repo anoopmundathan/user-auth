@@ -7,6 +7,12 @@ var app = express();
 app.use(bodyParser.urlencoded({ extended : false }));
 app.use(bodyParser.json());
 
+// Serve static files from /public
+app.use(express.static(__dirname + '/public'));
+
+// View Engine setup
+app.set('view engine', 'pug');
+app.set('views', __dirname + '/views');
 
 app.use('/', function(req, res) {
 	res.send('Hello World');
