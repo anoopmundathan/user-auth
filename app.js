@@ -14,9 +14,8 @@ app.use(express.static(__dirname + '/public'));
 app.set('view engine', 'pug');
 app.set('views', __dirname + '/views');
 
-app.use('/', function(req, res) {
-	res.send('Hello World');
-});
+var routes = require('./routes/index');
+app.use('/', routes);
 
 // Error Handling
 app.use(function(req, res, next) {
@@ -28,7 +27,7 @@ app.use(function(req, res, next) {
 app.use(function(err, req, res, next) {
 	res.status = err.status || 500;
 	res.render('error', {
-		message: err.message
+		message: err.message,
 		error: {}
 	});
 
