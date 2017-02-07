@@ -18,6 +18,21 @@ app.use('/', function(req, res) {
 	res.send('Hello World');
 });
 
+// Error Handling
+app.use(function(req, res, next) {
+	var err = new Error('File Not Found');
+	err.status = 404;
+	next(err);
+});
+
+app.use(function(err, req, res, next) {
+	res.status = err.status || 500;
+	res.render('error', {
+		message: err.message
+		error: {}
+	});
+
+});
 var port = process.env.PORT || 3000;
 
 app.listen(port, function() {
