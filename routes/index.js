@@ -28,17 +28,7 @@ router.get('/login', function(req, res, next) {
 });
 
 router.post('/login', function(req, res, next) {
-
-	User.create(req.body, function(err, user) {
-		res.json(user);
-	});
-
-	// var user = new User(req.body);
-	// user.save(function(err, user) {
-	// 	if(err) return next(err);
-	// 	res.status(201);
-	// 	res.json(user);
-	// });
+	res.send('Logged In');
 });
 
 router.get('/profile', function(req, res, next) {
