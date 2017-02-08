@@ -26,18 +26,15 @@ router.get('/login', function(req, res, next) {
 // POST /login - Validate Login 
 router.post('/login', function(req, res, next) {
 	if(req.body.email && req.body.password) {
-
-		User.authenticate(req.body.email, req.body.password, function(errMessage, user) {
-
-			if(errMessage || !user) {
+		User.authenticate(req.body.email, req.body.password, function(error, user) {
+			if(error || !user) {
 				var err = new Error('Wrong email or Password');
 				err.status = 401;
-				next(err);
+				return next(err);
+			} else {
+				req.session.userId = user._id;
+				res.redirect('/profile');
 			}
-
-			req.session.userId = user._id;
-			res.redirect('/profile');
-
 		});
 
 	} else {
@@ -47,8 +44,21 @@ router.post('/login', function(req, res, next) {
 	}
 });
 
+// GET /profile
 router.get('/profile', function(req, res, next) {
-	res.send('profile');
+  if (! req.session.userId ) {
+    var err = new Error("You are not authorized to view this page.");
+    err.status = 403;
+    return next(err);
+  }
+  User.findById(req.session.userId)
+      .exec(function (error, user) {
+        if (error) {
+          return next(error);
+        } else {
+          return res.render('profile', { title: 'Profile', name: user.name, favorite: user.favoriteBook });
+        }
+      });
 });
 
 // GET /register - the Sign Up form
