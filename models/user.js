@@ -26,6 +26,33 @@ var UserSchema = new mongoose.Schema({
   }
 });
 
+// Statics method
+UserSchema.statics.authenticate= function(email, password, callback) {
+
+	User.findOne({ email: email})
+      .exec(function(error, user) {
+
+        if(error) {
+          return callback(error);
+        } else if(!user) {
+          var err = new Error('User is not found');
+          err.status = 401;
+          return callback(err);
+        }
+
+        // Check password matching
+        bcrypt.compare(password, user.password, function(error, result) {
+          if(result === true) {
+            return callback(null, user);
+          } else {
+            return callback();
+          }
+        });
+
+      });
+}
+
+// Mongoose pre 'save' middleware hook
 UserSchema.pre('save', function(next) {
 	var user = this;
 	bcrypt.hash(user.password, 10, function(err, hash) {
@@ -34,6 +61,7 @@ UserSchema.pre('save', function(next) {
 		next();
 	});
 });
+
 
 var User = mongoose.model('User', UserSchema);
 

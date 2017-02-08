@@ -6,9 +6,6 @@ var router = express.Router();
 // GET / - Homepage
 router.get('/', function(req, res, next) {
 	res.render('index');
-	// User.find({}, function(err, users) {
-	// 	res.json(users);
-	// });
 });
 
 // GET /about - the About us page
@@ -21,14 +18,33 @@ router.get('/contact', function(req, res, next) {
 	res.render('contact');
 });
 
+// GET /login - Login request
 router.get('/login', function(req, res, next) {
-	// res.render('login');
-	// res.send('login');
-	res.render('login');
+	res.render('login', { title: 'Login'});
 });
 
+// POST /login - Validate Login 
 router.post('/login', function(req, res, next) {
-	res.send('Logged In');
+	if(req.body.email && req.body.password) {
+
+		User.authenticate(req.body.email, req.body.password, function(errMessage, user) {
+
+			if(errMessage || !user) {
+				var err = new Error('Wrong email or Password');
+				err.status = 401;
+				next(err);
+			}
+
+			req.session.userId = user._id;
+			res.redirect('/profile');
+
+		});
+
+	} else {
+		var err = new Error('Enter all fields');
+		err.status = 401;
+		next(err);
+	}
 });
 
 router.get('/profile', function(req, res, next) {
