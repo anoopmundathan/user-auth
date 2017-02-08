@@ -50,12 +50,36 @@ router.get('/register', function(req, res, next) {
 	res.render('register');
 });
 
-// POST /register
+// POST /register - Sign Up form
 router.post('/register', function(req, res, next) {
-	User.create(req.body, function(err, user) {
-		if(err) return next(err);
-		res.json(user);
-	});
+	//All fiels are there
+	if(req.body.name &&
+	   req.body.email &&
+	   req.body.favoriteBook &&
+	   req.body.password &&
+	   req.body.confirmPassword) {
+
+		// Confirm password checking
+		if(req.body.password !== req.body.confirmPassword) {
+			var err = new Error('Password not matching');
+			res.status(400);
+			return next(err);
+		} 
+
+   		//Save to database
+		User.create(req.body, function(err, user) {
+			if(err) {
+				return next(err);
+			} else {
+				res.redirect('/profile');
+			}
+		});
+	
+	} else {
+		var err = new Error('All fields are required');
+		res.status(400);
+		return next(err);
+	}	
 });
 
 module.exports = router;
