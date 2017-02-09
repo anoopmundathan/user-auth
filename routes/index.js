@@ -28,9 +28,9 @@ router.get('/login', mid.loggedOut, function(req, res, next) {
 
 // POST /login - Validate Login 
 router.post('/login', function(req, res, next) {
-	if(req.body.email && req.body.password) {
+	if (req.body.email && req.body.password) {
 		User.authenticate(req.body.email, req.body.password, function(error, user) {
-			if(error || !user) {
+			if (error || !user) {
 				var err = new Error('Wrong email or Password');
 				err.status = 401;
 				return next(err);
@@ -39,7 +39,6 @@ router.post('/login', function(req, res, next) {
 				res.redirect('/profile');
 			}
 		});
-
 	} else {
 		var err = new Error('Enter all fields');
 		err.status = 401;
@@ -66,12 +65,8 @@ router.get('/logout', function(req, res, next) {
 });
 
 // GET /profile
-router.get('/profile', function(req, res, next) {
-  if (! req.session.userId ) {
-    var err = new Error("You are not authorized to view this page.");
-    err.status = 403;
-    return next(err);
-  }
+router.get('/profile', mid.requiresLogin, function(req, res, next) {
+  
   User.findById(req.session.userId)
       .exec(function (error, user) {
         if (error) {
@@ -90,14 +85,14 @@ router.get('/register', mid.loggedOut, function(req, res, next) {
 // POST /register - Sign Up form
 router.post('/register', function(req, res, next) {
 	//All fiels are there
-	if(req.body.name &&
+	if (req.body.name &&
 	   req.body.email &&
 	   req.body.favoriteBook &&
 	   req.body.password &&
 	   req.body.confirmPassword) {
 
 		// Confirm password checking
-		if(req.body.password !== req.body.confirmPassword) {
+		if (req.body.password !== req.body.confirmPassword) {
 			var err = new Error('Password not matching');
 			res.status(400);
 			return next(err);
@@ -105,7 +100,7 @@ router.post('/register', function(req, res, next) {
 
    		//Save to database
 		User.create(req.body, function(err, user) {
-			if(err) {
+			if (err) {
 				return next(err);
 			} else {
 				res.redirect('/profile');
