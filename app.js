@@ -17,7 +17,8 @@ app.use(session({
 app.use(function(req, res, next) {
 	res.locals.currentUser = req.session.userId;
 	next();
-})
+});
+
 // Database setup
 mongoose.connect('mongodb://localhost/bookworm');
 var db = mongoose.connection;
@@ -30,7 +31,6 @@ db.once('open', function() {
 	console.log('Mongoose connection opened');
 });
 
-
 // Parse Incoming Requests
 app.use(bodyParser.urlencoded({ extended : false }));
 app.use(bodyParser.json());
@@ -41,7 +41,6 @@ app.use(express.static(__dirname + '/public'));
 // View Engine setup
 app.set('view engine', 'pug');
 app.set('views', __dirname + '/views');
-
 
 
 app.use('/', routes);
