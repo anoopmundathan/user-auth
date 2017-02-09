@@ -2,22 +2,10 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
 var routes = require('./routes/index');
 
 var app = express();
-
-// Use session for tracking login
-app.use(session({
-	secret: 'treehouse user authentication',
-	resave: true,
-	saveUninitialized: false
-}));
-
-// Make user id available to template
-app.use(function(req, res, next) {
-	res.locals.currentUser = req.session.userId;
-	next();
-});
 
 // Database setup
 mongoose.connect('mongodb://localhost/bookworm');
@@ -30,6 +18,21 @@ db.on('error', function(err) {
 db.once('open', function() {
 	console.log('Mongoose connection opened');
 });
+
+// Use session for tracking login
+app.use(session({
+	secret: 'treehouse user authentication',
+	resave: true,
+	saveUninitialized: false,
+	store: new MongoStore({ mongooseConnection: db})
+}));
+
+// Make user id available to template
+app.use(function(req, res, next) {
+	res.locals.currentUser = req.session.userId;
+	next();
+});
+
 
 // Parse Incoming Requests
 app.use(bodyParser.urlencoded({ extended : false }));
